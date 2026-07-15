@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wordly — Online Dictionary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="page">
+
+  <header class="site-header">
+    <div class="wordmark">Wordly<span class="wordmark-dot">.</span></div>
+
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <span class="toggle-track">
+        <span class="toggle-thumb"></span>
+      </span>
+      <span class="toggle-icon icon-sun" aria-hidden="true">&#9728;</span>
+      <span class="toggle-icon icon-moon" aria-hidden="true">&#9789;</span>
+    </button>
+  </header>
+
+  <section class="search-section" aria-label="Word search">
+    <h1 class="tagline">Look up any word.</h1>
+    <p class="subtagline">Definitions, pronunciation and synonyms, straight from the Free Dictionary API.</p>
+
+    <!-- JS later: preventDefault on submit, fetch https://api.dictionaryapi.dev/api/v2/entries/en/<word> -->
+    <form id="search-form" class="search-form" role="search" autocomplete="off">
+      <label for="search-input" class="sr-only">Search for a word</label>
+      <input
+        type="text"
+        id="search-input"
+        name="word"
+        placeholder="please enter your word, e.g. serendipity"
+        required
+      />
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+  </section>
+
+  <main class="main-content">
+
+    <!-- ============ RESULT CARD ============ -->
+    <!-- JS later: toggle [hidden] on the four .entry-state blocks depending on fetch status -->
+    <section id="result-section" class="entry-card" aria-live="polite">
+
+      <div class="entry-state entry-empty">
+        <p>Search a word above to see its definition, pronunciation and more.</p>
+      </div>
+
+      <div class="entry-state entry-loading" hidden>
+        <p>Looking that up&hellip;</p>
+      </div>
+
+      <div class="entry-state entry-error" hidden>
+        <p class="error-title">No entry found</p>
+        <p>Check the spelling, or try a different word.</p>
+      </div>
+
+      
+
+
+      <div class="entry-state entry-result" id="entry-results" hidden>
+
+        <article class="entry-result-item">
+
+          <!-- Signature element: ribbon "bookmark" doubles as the favourite toggle -->
+          <button class="ribbon-toggle" type="button" aria-label="Save to favourites" aria-pressed="false">
+            <span class="ribbon"></span>
+          </button>
+
+          <div class="entry-head">
+            <h2 class="headword">stand</h2>
+
+            <!--
+              One .pronunciation-chip per element in the API's phonetics[] array
+              (e.g. UK audio, US audio). Omit the audio-btn entirely for any
+              chip whose "audio" field is an empty string.
+            -->
+            <div class="phonetic-row">
+              <div class="pronunciation-chip">
+                <span class="phonetic">/st&aelig;nd/</span>
+                <button class="audio-btn" type="button" aria-label="Play pronunciation 1">&#9658;</button>
+              </div>
+              <div class="pronunciation-chip">
+                <span class="phonetic">/st&aelig;nd/</span>
+                <button class="audio-btn" type="button" aria-label="Play pronunciation 2">&#9658;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- One .meaning-block per part of speech -->
+          <div class="meaning-block">
+            <p class="part-of-speech">noun</p>
+            <ol class="definitions-list">
+              <li>
+                The act of standing.
+              </li>
+              <li>
+                A defensive position or effort.
+                <p class="definition-example">&ldquo;The Commander says we will make our stand here.&rdquo;</p>
+              </li>
+              <li>
+                A resolute, unwavering position; firm opinion; action for a purpose in the face of opposition.
+                <p class="definition-example">&ldquo;They took a firm stand against copyright infringement.&rdquo;</p>
+              </li>
+              <li>
+                A period of performance in a given location or venue.
+              </li>
+              <li>
+                A device to hold something upright or aloft.
+              </li>
+              <!-- JS later: definitions past the 5th stay in the DOM but hidden, revealed by the show-more button -->
+              <li class="extra-definition" hidden>The platform on which a witness testifies in court.</li>
+              <li class="extra-definition" hidden>A particular grove or other group of trees or shrubs.</li>
+              <li class="extra-definition" hidden>A contiguous group of trees of uniform age-class, composition and structure.</li>
+              <li class="extra-definition" hidden>A standstill; a motionless state.</li>
+              <li class="extra-definition" hidden>A small building, booth, or stage.</li>
+              <li class="extra-definition" hidden>A designated spot where someone or something may stand or wait.</li>
+              <li class="extra-definition" hidden>The situation of a shop, store, hotel, etc.</li>
+              <li class="extra-definition" hidden>Grandstand (often in the plural).</li>
+              <li class="extra-definition" hidden>A partnership.</li>
+              <li class="extra-definition" hidden>A single set, as of arms.</li>
+              <li class="extra-definition" hidden>Rank; post; station; standing.</li>
+              <li class="extra-definition" hidden>A state of perplexity or embarrassment.</li>
+              <li class="extra-definition" hidden>A young tree reserved when others are cut.</li>
+              <li class="extra-definition" hidden>A weight of 250&ndash;300 lb used in weighing pitch.</li>
+            </ol>
+
+            <!-- JS later: only render this button if the meaning has more than 5 definitions -->
+            <button class="show-more-btn" type="button" aria-expanded="false">Show 14 more definitions</button>
+
+            <!-- JS later: only render .synonyms at all if the definitions/meaning actually has synonyms -->
+            <!-- This meaning has none in the sample data, so it's omitted entirely rather than shown empty -->
+          </div>
+
+          <div class="meaning-block">
+            <p class="part-of-speech">verb</p>
+            <ol class="definitions-list">
+              <li>To position or be positioned physically.</li>
+              <li>To remain without ruin or injury.</li>
+              <li>To stop asking for more cards; to keep one's hand as dealt so far.</li>
+            </ol>
+          </div>
+
+          <footer class="entry-source">
+            Source: <a href="https://en.wiktionary.org/wiki/stand" target="_blank" rel="noopener">en.wiktionary.org</a>
+            &middot; CC BY-SA 3.0
+          </footer>
+        </article>
+
+        <!-- If the API returns a second homograph, JS appends another .entry-result-item here.
+             The CSS below adds a divider automatically — no extra markup needed. -->
+
+      </div>
+    </section>
+
+    <!-- ============ FAVORITES ============ -->
+    <section id="favourites-section" class="favourites-section" aria-label="Favourite words">
+      <div class="favourites-header">
+        <h2>Favourites</h2>
+        <span class="favourites-count" id="favourites-count">0</span>
+      </div>
+
+      <div class="favourites-empty">
+        <p>Words you save will show up here.</p>
+      </div>
+
+      <!-- JS later: render one .favourite-chip per saved word, clicking the word re-searches it -->
+      <ul class="favourites-list" hidden>
+        <li class="favourite-chip">
+          <button type="button" class="favourite-word">example</button>
+          <button type="button" class="favourite-remove" aria-label="Remove example from favourites">&times;</button>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Built with the <a href="https://dictionaryapi.dev" target="_blank" rel="noopener">Free Dictionary API</a>.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
