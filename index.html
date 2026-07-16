@@ -17,7 +17,6 @@
     <header class="site-header">
     <div class="wordmark">Wordly<span class="wordmark-dot">.</span></div>
 
-    <!-- JS later: toggle data-theme on <html> between "light" / "dark", persist to localStorage -->
     <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
       <span class="toggle-track">
         <span class="toggle-thumb"></span>
@@ -32,7 +31,6 @@
     <h1 class="tagline">Look up any word.</h1>
     <p class="subtagline">Definitions, pronunciation and synonyms, straight from the Free Dictionary API.</p>
 
-    <!-- JS later: preventDefault on submit, fetch https://api.dictionaryapi.dev/api/v2/entries/en/<word> -->
 
     <form id="search-form" class="search-form" role="search" autocomplete="off">
       <label for="search-input" class="sr-only">Search for a word</label>
@@ -49,7 +47,6 @@
 
   <main class="main-content">
 
-    <!-- JS later: toggle [hidden] on the four .entry-state blocks depending on fetch status -->
     <section id="result-section" class="entry-card" aria-live="polite">
 
       <div class="entry-state entry-empty">
@@ -70,7 +67,6 @@
       <div class="entry-state entry-result" id="entry-results" hidden></div>
     </section>
 
-    <!-- ============ FAVOURITES ============ -->
     <section id="favourites-section" class="favourites-section" aria-label="Favourite words">
       <div class="favourites-header">
         <h2>Favourites</h2>
@@ -81,7 +77,6 @@
         <p>Words you save will show up here.</p>
       </div>
 
-      <!-- JS later: createElement one .favourite-chip <li> per saved word and append here -->
       <ul class="favourites-list" id="favourites-list" hidden></ul>
     </section>
 

@@ -134,6 +134,10 @@ async function handleSearch(event) {
     if (!word) {
         return 
     };
+
+    const allStates = document.querySelectorAll('.entry-state');
+    allStates.forEach(state => state.setAttribute('hidden', '')); 
+    document.querySelector('.entry-loading').removeAttribute('hidden');
     try{
         const response = await fetch (`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
 
@@ -146,6 +150,8 @@ async function handleSearch(event) {
     }
     catch (error){
         console.error('Error', error)
+        allStates.forEach(state => state.setAttribute('hidden', ''));
+        document.querySelector('.entry-error').removeAttribute('hidden');
     }
 }
 
@@ -297,8 +303,6 @@ function displayData(data) {
 
             item.appendChild(block);
         });
-
-
         const source = document.createElement('footer');
         source.className = 'entry-source'; 
         const sourceUrl = (entry.sourceUrls && entry.sourceUrls[0]) || '#';
@@ -307,7 +311,5 @@ function displayData(data) {
 
         resultContainer.appendChild(item);
     });
-
 }
-
 renderFavourites();
