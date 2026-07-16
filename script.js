@@ -3,19 +3,130 @@ function toggleDarkMode () {
     const theme = document.getElementById('theme-toggle');
     const isDark = root.getAttribute('data-theme') === 'dark'
     const newTheme = isDark? 'light' : 'dark';
-
+ 
     root.setAttribute('data-theme', newTheme);
     theme.classList.toggle('is-dark', newTheme === 'dark');
     theme.setAttribute('aria-pressed', newTheme === 'dark');
     theme.setAttribute('aria-label', newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-
+ 
+    localStorage.setItem('wordly-theme', newTheme);
 }
 
 document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
 
+const storedTheme = localStorage.getItem('wordly-theme');
+if (storedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('theme-toggle').classList.add('is-dark');
+    document.getElementById('theme-toggle').setAttribute('aria-pressed', 'true');
+    document.getElementById('theme-toggle').setAttribute('aria-label', 'Switch to light mode');
+}
+
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 searchForm.addEventListener('submit', handleSearch); 
+
+const favourites_key = 'wordly-favourites';
+let favourites = JSON.parse(localStorage.getItem(favourites_key)) || [];
+
+const favouritesList = document.getElementById('favourites-list');
+const favouritesEmpty = document.querySelector('.favourites-empty');
+const favouritesCount = document.getElementById('favourites-count');
+
+function saveFavourites (){
+    localStorage.setItem(favourites_key, JSON.stringify(favourites));
+}
+
+function isFavourite(word) {
+    return favourites.includes(word.toLowerCase());
+}
+
+function addFavourite(word){
+    if (!isFavourite(word)){
+        favourites.push(word.toLowerCase());
+        saveFavourites();
+        renderFavourites();
+    }
+}
+
+function removeFavourite(word){
+    favourites = favourites.filter(fav => fav !== word.toLowerCase());
+    saveFavourites();
+    renderFavourites();
+    syncRibbonButtons(word);
+}
+
+function toggleFavourite(word, ribbonBtn){
+    if(isFavourite(word)){
+        removeFavourite(word);
+    }else{
+        addFavourite(word);
+    }
+
+    updateRibbonButton(ribbonBtn, isFavourite(word));
+}
+
+function updateRibbonButton(ribbonBtn, saved){
+    ribbonBtn.classList.toggle('is-saved', saved);
+    ribbonBtn.setAttribute('aria-pressed', saved);
+    ribbonBtn.setAttribute('aria-label', saved ? 'Remove from favourites' : 'Save to favourites');
+}
+
+function syncRibbonButtons(word){
+    const saved = isFavourite(word);
+    document.querySelectorAll('.entry-result-item').forEach (item => {
+        const headWord = item.querySelector('.headword');
+        const ribbonBtn = item.querySelector('.ribbon-toggle');
+        if (headWord && ribbonBtn && headWord.textContent.toLowerCase() === word.toLowerCase()){
+            updateRibbonButton(ribbonBtn, saved);
+        }
+    });
+}
+
+
+function renderFavourites(){
+    favouritesList.innerHTML = '';
+    favouritesCount.textContent = favourites.length;
+
+
+    if (favourites.length === 0) {
+        favouritesEmpty.removeAttribute('hidden');
+        favouritesList.setAttribute('hidden', '');
+        return;
+    }
+
+    favouritesEmpty.setAttribute('hidden', '');
+    favouritesList.removeAttribute('hidden');
+
+    favourites.forEach(word => {
+        const chip = document.createElement('li');
+        chip.className = 'favourite-chip';
+
+        const wordBtn = document.createElement('button');
+        wordBtn.type = 'button';
+        wordBtn.className = 'favourite-word';
+        wordBtn.textContent = word;
+        wordBtn.addEventListener('click', () => {
+            searchInput.value = word;
+            searchForm.requestSubmit();
+        });
+
+        chip.appendChild(wordBtn);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'favourite-remove';
+        removeBtn.setAttribute('aria-label', `Remove ${word} from favourites`);
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', () => removeFavourite(word));
+
+        chip.appendChild(removeBtn);
+
+        favouritesList.appendChild(chip);
+    });
+}
+
+
 
 async function handleSearch(event) {
     event.preventDefault();
@@ -55,6 +166,8 @@ function displayData(data) {
         ribbonBtn.className = 'ribbon-toggle';
         ribbonBtn.setAttribute('aria-label', 'save to favourites'); 
         ribbonBtn.setAttribute('aria-pressed', 'false');
+        ribbonBtn.addEventListener('click', () => toggleFavourite(entry.word, ribbonBtn));
+        updateRibbonButton(ribbonBtn, isFavourite(entry.word));
 
         const ribbon = document.createElement('span');
         ribbon.className = 'ribbon';
@@ -196,3 +309,5 @@ function displayData(data) {
     });
 
 }
+
+renderFavourites();
